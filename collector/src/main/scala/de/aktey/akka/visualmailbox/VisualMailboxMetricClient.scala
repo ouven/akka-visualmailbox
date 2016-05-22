@@ -33,19 +33,27 @@ class VisualMailboxMetricClient(system: ExtendedActorSystem, config: VisualMailb
 }
 
 class VisualMailboxMetricListener(udpSender: ActorRef) extends Actor {
+
+  import context._
+
+  import concurrent.duration._
+
   var buffer: List[VisualMailboxMetric] = Nil
 
-  context.system.eventStream.subscribe(self, classOf[VisualMailboxMetric])
+  system.eventStream.subscribe(self, classOf[VisualMailboxMetric])
+  system.scheduler.schedule(1.second, 1.second, self, "flush")
 
   @scala.throws[Exception](classOf[Exception])
-  override def postStop(): Unit = context.system.eventStream.unsubscribe(self)
+  override def postStop(): Unit = {
+    system.eventStream.unsubscribe(self)
+  }
 
   def receive: Receive = {
     case v: VisualMailboxMetric =>
       buffer ::= v
       if (buffer.size > 40) self ! "flush"
 
-    case "flush" =>
+    case "flush" if buffer.nonEmpty =>
       udpSender ! Packing.pack(buffer)
       buffer = Nil
   }
