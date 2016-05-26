@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/ouven/akka-visualmailbox.svg?branch=master)](https://travis-ci.org/ouven/akka-visualmailbox)
 
-Current version: 0
+Current version: ${version}
 
 ## collector
 

@@ -5,7 +5,6 @@ val Versions = new {
 
 lazy val commonSettings = Seq(
   organization := "de.aktey.akka.visualmailbox",
-  version := "1.0-SNAPSHOT",
 
   scalaVersion := "2.11.8",
 
@@ -16,6 +15,12 @@ lazy val commonSettings = Seq(
     "Apache License Version 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0"),
     "The New BSD License" -> url("http://www.opensource.org/licenses/bsd-license.html")
   ),
+
+  sources in EditSource <++= baseDirectory.map(d => (d / ".doctmpl" / "README.md").get),
+  targetDirectory in EditSource <<= baseDirectory,
+  variables in EditSource <+= version { v => ("version", v) },
+
+  releaseProcess := ReleaseProcess.steps,
 
   publishTo <<= version { v: String =>
     val nexus = "https://oss.sonatype.org/"
@@ -77,4 +82,15 @@ lazy val collector = project
 lazy val visualization = project
   .dependsOn(common)
   .settings(commonSettings: _*)
-  .settings(Seq())
+  .settings(Seq(
+    resolvers += Resolver.bintrayRepo("hseeberger", "maven"),
+
+    publishArtifact := false,
+
+    libraryDependencies ++= Seq(
+      "de.heikoseeberger" %% "akka-sse" % "1.8.0",
+      "com.typesafe.akka" %% "akka-http-experimental" % Versions.akka,
+      "com.typesafe.akka" %% "akka-slf4j" % Versions.akka,
+      "ch.qos.logback" % "logback-classic" % "1.1.7"
+    )
+  ))
