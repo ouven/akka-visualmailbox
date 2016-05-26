@@ -59,7 +59,7 @@ lazy val commonSettings = Seq(
   )
 )
 
-lazy val root = project.in(file("."))
+lazy val `akka-visualmailbox` = project.in(file("."))
   .aggregate(collector, common, visualization)
   .settings(commonSettings: _*)
   .settings(Seq(
