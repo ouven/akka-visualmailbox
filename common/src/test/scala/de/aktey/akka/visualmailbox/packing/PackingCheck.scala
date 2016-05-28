@@ -1,6 +1,6 @@
 package de.aktey.akka.visualmailbox.packing
 
-import de.aktey.akka.visualmailbox.VisualMailboxMetric
+import de.aktey.akka.visualmailbox.{MetricEnvelope, VisualMailboxMetric}
 import org.scalacheck.Prop._
 import org.scalacheck.{Arbitrary, Gen, Properties}
 
@@ -12,15 +12,28 @@ object PackingCheck extends Properties("PackingCheck") {
     a == unpack[A](pack(a)).get
 
   implicit val VisualMailboxMetricGenerator: Arbitrary[VisualMailboxMetric] = Arbitrary(for {
-    sender <- Gen.alphaStr
-    receiver <- Gen.alphaStr
+    sender <- Arbitrary.arbString.arbitrary
+    receiver <- Arbitrary.arbString.arbitrary
     receiverMailBoxSize <- Gen.choose(Int.MinValue, Int.MaxValue)
     meassureTimeMillies <- Gen.choose(Long.MinValue, Long.MaxValue)
   } yield VisualMailboxMetric(sender, receiver, receiverMailBoxSize, meassureTimeMillies))
 
-  property("string-packer") = forAll(Gen.alphaStr) { (a: String) => packUnpack(a) }
+  implicit val EnvelopeGenerator: Arbitrary[MetricEnvelope] = Arbitrary(for {
+    version <- Gen.choose(Int.MinValue, Int.MaxValue)
+    payload <- Gen.containerOf[Array, Byte](Gen.choose(Byte.MinValue, Byte.MaxValue))
+  } yield MetricEnvelope(version, payload))
 
-  property("string-traversal-packer") = forAll(Gen.listOfN(100, Gen.alphaStr)) { (a: List[String]) => packUnpack(a) }
+  property("int-packer") = forAll(Gen.choose(Int.MinValue, Int.MaxValue)) { a => packUnpack(a) }
+
+  property("string-packer") = forAll { (a: String) => packUnpack(a) }
+
+  property("envelope-packer") = forAll { a: MetricEnvelope =>
+    val unpacked = unpack[MetricEnvelope](pack(a)).get
+    unpacked.version == a.version &&
+      unpacked.payload.toList == a.payload.toList
+  }
+
+  property("string-traversal-packer") = forAll { (a: List[String]) => packUnpack(a) }
 
   property("visual-mailbox-metric-packer") = forAll { (a: VisualMailboxMetric) => packUnpack(a) }
 

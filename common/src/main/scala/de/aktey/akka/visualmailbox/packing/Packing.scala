@@ -2,7 +2,7 @@ package de.aktey.akka.visualmailbox.packing
 
 import java.nio.charset.Charset
 
-import de.aktey.akka.visualmailbox.VisualMailboxMetric
+import de.aktey.akka.visualmailbox.{MetricEnvelope, VisualMailboxMetric}
 
 import scala.annotation.tailrec
 import scala.collection.generic.CanBuildFrom
@@ -30,11 +30,22 @@ object Packing {
 trait Packers {
   def charSet: Charset
 
+  implicit object IntPacker extends Packer[Int] {
+    override def pack(a: Int): Array[Byte] = {
+      Array((a >>> 24).toByte, (a >>> 16).toByte, (a >>> 8).toByte, a.toByte)
+    }
+  }
+
   implicit object StringPacker extends Packer[String] {
     override def pack(a: String): Array[Byte] = {
       val packed = a.getBytes(charSet)
-      val size = packed.size
-      Array((size >> 24).toByte, (size >> 16).toByte, (size >> 8).toByte, size.toByte) ++ packed
+      Packing.pack(packed.size) ++ packed
+    }
+  }
+
+  implicit object EnvelopPacker extends Packer[MetricEnvelope] {
+    override def pack(a: MetricEnvelope): Array[Byte] = {
+      Packing.pack(a.version) ++ a.payload
     }
   }
 
@@ -48,7 +59,7 @@ trait Packers {
 
   implicit def traversablePacker[A, T](implicit ev: T <:< Traversable[A], apacker: Packer[A]): Packer[T] = new Packer[T] {
     override def pack(t: T): Array[Byte] =
-      t.foldLeft(s"${t.size}:".getBytes(charSet)) {
+      t.foldLeft(Packing.pack(t.size)) {
         (bytes, elem) => bytes ++ Packing.pack(elem)
       }
   }
@@ -57,21 +68,36 @@ trait Packers {
 trait Unpackers {
   def charSet: Charset
 
-  implicit object StringUnpacker extends Unpacker[String] {
-    override def unpack(bytes: Array[Byte]): Try[(String, Array[Byte])] = Try {
-      val sizeBytes = bytes.take(4)
-      val size = (sizeBytes(0) << 24) + (sizeBytes(1) << 16) + (sizeBytes(2) << 8) + sizeBytes(3)
-      val strBytes = bytes.slice(4, 4 + size)
-      (new String(strBytes, charSet), bytes.drop(4 + size))
+  implicit object IntUnpacker extends Unpacker[Int] {
+    override def unpack(bytes: Array[Byte]): Try[(Int, Array[Byte])] = Try {
+      val intBytes = bytes.take(4)
+      val i = (intBytes(0) << 24) | (intBytes(1) << 24 >>> 8) | (intBytes(2) << 24 >>> 16) | (intBytes(3) << 24 >>> 24)
+      (i, bytes.drop(4))
     }
   }
 
+  implicit object StringUnpacker extends Unpacker[String] {
+    override def unpack(bytes: Array[Byte]): Try[(String, Array[Byte])] =
+      Packing.iunpack[Int](bytes).flatMap {
+        case (size, rest) => Try {
+          val strBytes = rest.take(size)
+          (new String(strBytes, charSet), rest.drop(size))
+        }
+      }
+  }
+
+  implicit object EnvelopeUnpacker extends Unpacker[MetricEnvelope] {
+    override def unpack(bytes: Array[Byte]): Try[(MetricEnvelope, Array[Byte])] =
+      Packing.iunpack[Int](bytes).map {
+        case (version, rest) => (MetricEnvelope(version, rest), Array.empty[Byte])
+      }
+  }
+
   implicit def traversableUnpacker[A, T](implicit ev: T <:< Traversable[A], bf: CanBuildFrom[List[A], A, T], aunpacker: Unpacker[A]) = new Unpacker[T] {
-    override def unpack(bytes: Array[Byte]): Try[(T, Array[Byte])] = Try {
-      new String(bytes, charSet).splitColon
-    } flatMap { case (nr, code) =>
-      unpackRec(bf(), nr.toInt, code.getBytes(charSet))
-    }
+    override def unpack(bytes: Array[Byte]): Try[(T, Array[Byte])] =
+      Packing.iunpack[Int](bytes).flatMap {
+        case (size, rest) => unpackRec(bf(), size, rest)
+      }
 
     @tailrec
     private def unpackRec(b: mutable.Builder[A, T], n: Int, bytes: Array[Byte]): Try[(T, Array[Byte])] = {

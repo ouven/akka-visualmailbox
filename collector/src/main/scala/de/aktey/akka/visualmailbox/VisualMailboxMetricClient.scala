@@ -54,7 +54,7 @@ class VisualMailboxMetricListener(udpSender: ActorRef) extends Actor {
       if (buffer.size > 40) self ! "flush"
 
     case "flush" if buffer.nonEmpty =>
-      udpSender ! Packing.pack(buffer)
+      udpSender ! Packing.pack(MetricEnvelope(1, Packing.pack(buffer)))
       buffer = Nil
   }
 }
