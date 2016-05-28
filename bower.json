@@ -1,0 +1,6 @@
+{
+  "name": "akka-visual-mailbox",
+  "dependencies": {
+    "vis": "^4.16"
+  }
+}

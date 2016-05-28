@@ -1,0 +1,13 @@
+<configuration scan="true" scanPeriod="10 seconds">
+
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%date{HH:mm:ss} %-5level [%X{akkaSource}, %logger, pid: %X{pid}] - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="DEBUG">
+        <appender-ref ref="stash"/>
+    </root>
+
+</configuration>
