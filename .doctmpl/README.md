@@ -61,7 +61,7 @@ to run the server.
 ## sample-project
 The sample project puts it all together, to show the usage and to play arround with pictures. You can run it with
 ```bash
-sbt "project visualization" run
+sbt "project sample-project" run
 ```
   
 
