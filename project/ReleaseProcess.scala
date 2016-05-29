@@ -29,7 +29,7 @@ object ReleaseProcess {
     tagRelease,
     publishArtifacts,
     setNextVersion,
-    commitNextVersion //,
-    //pushChanges
+    commitNextVersion,
+    pushChanges
   )
 }
