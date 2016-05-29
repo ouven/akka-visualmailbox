@@ -27,7 +27,7 @@ object ReleaseProcess {
     generateDoc,
     commitReleaseVersion,
     tagRelease,
-    //publishArtifacts,
+    publishArtifacts,
     setNextVersion,
     commitNextVersion //,
     //pushChanges

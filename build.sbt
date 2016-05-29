@@ -20,6 +20,8 @@ lazy val commonSettings = Seq(
   targetDirectory in EditSource <<= baseDirectory,
   variables in EditSource <+= version { v => ("version", v) },
 
+  // relase with sbt-pgp plugin
+  releasePublishArtifactsAction := PgpKeys.publishSigned.value,
   releaseProcess := ReleaseProcess.steps,
 
   publishTo <<= version { v: String =>
