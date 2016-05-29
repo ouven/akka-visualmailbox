@@ -94,3 +94,10 @@ lazy val visualization = project
       "ch.qos.logback" % "logback-classic" % "1.1.7"
     )
   ))
+
+lazy val `sample-project` = project
+  .dependsOn(collector)
+  .settings(commonSettings: _*)
+  .settings(Seq(
+    publishArtifact := false
+  ))
