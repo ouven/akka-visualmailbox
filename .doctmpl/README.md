@@ -6,7 +6,14 @@
 
 Current version: ${version}
 
+This project wants help you finding hotspots in you Akka application by visualizing you message flows.
+
+![sample flow](./sample.png)
+
 ## collector
+
+akka.actor.default-mailbox.mailbox-type = "de.aktey.akka.visualmailbox.VisualMailboxType"
+
 
 ## visualization
 JavaScript uses the "class" keyword and "EventSource", so it is viewable with Chrome
