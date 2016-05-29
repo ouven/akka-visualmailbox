@@ -14,7 +14,7 @@ class DataSourceEndpoint(router: ActorRef) extends Actor with ActorLogging {
   def receive = {
     case Received(datagram, _) => Packing.unpack[MetricEnvelope](datagram.to[Array]) match {
       case Success(MetricEnvelope(1, payload)) =>
-        Packing.unpack[List[VisualMailboxMetric]](datagram.to[Array]) match {
+        Packing.unpack[List[VisualMailboxMetric]](payload) match {
           case Success(list) => list.foreach(router ! _)
           case Failure(e) => log.error(e, "unmarshal error")
         }
