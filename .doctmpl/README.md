@@ -6,17 +6,17 @@
 
 Current version: ${version}
 
-This project wants to help you finding hotspots in you Akka application by visualizing you message flows
-like this. Actors are displayed as nodes, message flows are displayed as arrows. The thicker an arrow
-is displayed the more messages have been sent this way. You can get the actor path by clicking the nodes.
-The number shown on a node represents the mailbox size of this actor.   
+This project wants to help you finding hotspots in your Akka application by visualizing your message flows
+like it is shown on the next picture. Actors are displayed as nodes, message flows are displayed as arrows.
+The thicker an arrow is displayed, the more messages have been sent this way. You can get the actor path by
+clicking the nodes. The number shown on a node represents the mailbox size of this actor.   
 
 ![sample flow](./sample.png)
 
 ## collector
 The collector is the component that collects the mailbox data and sends it to the visualization server.
 To integrate the collector into your project you just have to add the dependency to your build file 
-and the collector mailbox for the akka default dispatcher.
+and set the collector mailbox for the akka default dispatcher.
 
 build.sbt
 ```sbt
@@ -28,7 +28,7 @@ application.conf:
 akka.actor.default-mailbox.mailbox-type = "de.aktey.akka.visualmailbox.VisualMailboxType"
 ```
 
-It will collect your mailbox data and sent it in chunks of 40 data sets or at least every second to the visualization server. 
+It will collect your mailbox data and send it in chunks of 40 data sets or at least every second to the visualization server. 
 
 ## visualization
 The visualisation component receives the mailbox data at `udp://localhost:60009`, which can be changed in the application.conf by overriding
