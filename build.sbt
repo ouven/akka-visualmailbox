@@ -51,8 +51,8 @@ lazy val commonSettings = Seq(
       </developer>
     </developers>
     <scm>
-      <url>git@github.com:ouven/visualmailbox.git</url>
-      <connection>scm:git:git@github.com:ouven/visualmailbox.git</connection>
+      <url>git@github.com:ouven/akka-visualmailbox.git</url>
+      <connection>scm:git:git@github.com:ouven/akka-visualmailbox.git</connection>
       <developerConnection>scm:git:git@github.com:ouven/akka-visualmailbox.git</developerConnection>
     </scm>,
 
