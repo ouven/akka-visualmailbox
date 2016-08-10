@@ -63,6 +63,17 @@ trait Packers {
         (bytes, elem) => bytes ++ Packing.pack(elem)
       }
   }
+
+  implicit def mapPacker[A, B](implicit tpacker: Packer[(A, B)]): Packer[Map[A, B]] = new Packer[Map[A, B]] {
+    override def pack(t: Map[A, B]): Array[Byte] =
+      t.foldLeft(Packing.pack(t.size)) {
+        (bytes, elem) => bytes ++ tpacker.pack(elem)
+      }
+  }
+
+  implicit def tuple2Packer[A, B](implicit apacker: Packer[A], bpacker: Packer[B]): Packer[(A, B)] = new Packer[(A, B)] {
+    override def pack(t: (A, B)): Array[Byte] = apacker.pack(t._1) ++ bpacker.pack(t._2)
+  }
 }
 
 trait Unpackers {
@@ -122,4 +133,15 @@ trait Unpackers {
     } yield (VisualMailboxMetric(sender, receiver, receiverMailBoxSize.toInt, meassureTimeMillies.toLong), r)
   }
 
+  implicit def mapUnpacker[A, B](implicit ev: Unpacker[Traversable[(A, B)]], tunpacker: Unpacker[(A, B)]) = new Unpacker[Map[A, B]] {
+    override def unpack(bytes: Array[Byte]): Try[(Map[A, B], Array[Byte])] =
+      for ((t, rest) <- Packing.iunpack[Traversable[(A, B)]](bytes)) yield (t.toMap, rest)
+  }
+
+  implicit def tuple2Unpacker[A, B](implicit aunpacker: Unpacker[A], bunpacker: Unpacker[B]): Unpacker[(A, B)] = new Unpacker[(A, B)] {
+    override def unpack(bytes: Array[Byte]): Try[((A, B), Array[Byte])] = for {
+      (a, r1) <- Packing.iunpack[A](bytes)
+      (b, r2) <- Packing.iunpack[B](r1)
+    } yield ((a, b), r2)
+  }
 }

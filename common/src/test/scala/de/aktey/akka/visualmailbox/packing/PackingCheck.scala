@@ -39,4 +39,8 @@ object PackingCheck extends Properties("PackingCheck") {
 
   property("visual-mailbox-metric-traversal-packer") = forAll { (a: List[VisualMailboxMetric]) => packUnpack(a) }
 
+  property("visual-mailbox-metric-tuple2-packer") = forAll { (a: (String, Int)) => packUnpack(a) }
+
+  property("visual-mailbox-metric-map-packer") = forAll { (a: Map[String, Int]) => packUnpack(a) }
+
 }
