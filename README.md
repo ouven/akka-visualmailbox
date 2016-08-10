@@ -4,7 +4,7 @@
 [![Project Score](https://img.shields.io/badge/Project%20Score-%F0%9F%92%A9-brightgreen.svg)](https://img.shields.io)
 [![Project Mood](https://img.shields.io/badge/Project%20Mood-%F0%9F%98%84-brightgreen.svg)](https://img.shields.io)
 
-Current version: 1.0.0
+Current version: 1.0.1
 
 This project wants to help you finding hotspots in your Akka application by visualizing your message flows
 like it is shown on the next picture. Actors are displayed as nodes, message flows are displayed as arrows.
@@ -20,7 +20,7 @@ and set the collector mailbox for the akka default dispatcher.
 
 build.sbt
 ```sbt
-libraryDependencies += "de.aktey.akka.visualmailbox" %% "collector" % "1.0.0"
+libraryDependencies += "de.aktey.akka.visualmailbox" %% "collector" % "1.0.1"
 ``` 
 
 application.conf:
