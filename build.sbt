@@ -1,6 +1,6 @@
 
 val Versions = new {
-  val akka = "2.4.6"
+  val akka = "2.4.8"
 }
 
 lazy val commonSettings = Seq(
