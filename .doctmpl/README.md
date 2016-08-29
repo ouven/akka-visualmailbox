@@ -43,7 +43,18 @@ de.aktey.akka.visualmailbox {
 }
 ```
 
-It servers a web surface at [http://localhost:8080](http://localhost:8080), that renders the messages with vis.js.
+It servers a web surface at [http://localhost:8080](http://localhost:8080), that renders the messages with vis.js
+The web server can be changed to listen at a different interface by overriding in the application.conf
+```
+de.aktey.akka.visualmailbox {
+  web.server {
+    address {
+      host: "0.0.0.0"
+      port: 8080
+    }
+  }
+}
+```
 It uses the JavaScript keyword "class" and the "EventSource" API, so it is viewable with Chrome
 42+ or Firefox 45+. Other browsers I did not try.
 
