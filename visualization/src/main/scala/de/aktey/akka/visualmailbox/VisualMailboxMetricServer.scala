@@ -10,7 +10,7 @@ import akka.stream.ActorMaterializer
 import akka.util.Timeout
 import com.typesafe.config.ConfigFactory
 import de.aktey.akka.visualmailbox.data.DataSourceEndpoint
-import de.aktey.akka.visualmailbox.web.Routing
+import de.aktey.akka.visualmailbox.web.{Routing, WebConfig}
 
 import scala.concurrent.duration._
 
@@ -19,7 +19,8 @@ import scala.concurrent.duration._
   */
 object VisualMailboxMetricServer extends App {
 
-  val config = VisualMailboxMetricClientConfig.fromConfig(ConfigFactory.load())
+  val allConfig = ConfigFactory.load()
+  val config = VisualMailboxMetricClientConfig.fromConfig(allConfig)
 
   implicit val system = ActorSystem("visualmailbox-visualizer")
   implicit val meterializer = ActorMaterializer()
@@ -38,8 +39,10 @@ object VisualMailboxMetricServer extends App {
       log.info(s"""{"type":"udp-bound","address":"$address"}""")
   }
 
+  val webConfig = WebConfig.fromConfig(allConfig)
+
   Http()
-    .bindAndHandle(Routing.root(MetricFlow.metricSource(router)), "0.0.0.0", 8080)
+    .bindAndHandle(Routing.root(MetricFlow.metricSource(router)), webConfig.host, webConfig.port)
     .onSuccess { case ServerBinding(address) =>
       log.info(s"""{"type":"http-bound","address":"$address"}""")
     }
