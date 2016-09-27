@@ -3,3 +3,7 @@ scala:
    - 2.11.8
 jdk:
   - oraclejdk8
+
+before_script:
+  - npm install -g bower
+  - bower install
