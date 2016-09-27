@@ -8,6 +8,4 @@ before_script:
   - npm install -g bower
   - bower install
 
-script:
-  - sbt test
-  - sbt "project visualization" docker:publish
+script: sbt test 'project visualization' docker:publish
