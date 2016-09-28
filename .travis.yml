@@ -11,4 +11,7 @@ before_script:
   - npm install -g bower
   - bower install
 
+before_install:
+  - docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+
 script: sbt test 'project visualization' 'docker:publish'
