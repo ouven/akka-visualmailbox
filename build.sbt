@@ -1,6 +1,7 @@
+import com.typesafe.sbt.packager.docker.{Cmd, ExecCmd}
 
 val Versions = new {
-  val akka = "2.4.8"
+  val akka = "2.4.10"
 }
 
 lazy val commonSettings = Seq(
@@ -82,6 +83,7 @@ lazy val collector = project
   .settings(Seq())
 
 lazy val visualization = project
+  .enablePlugins(JavaAppPackaging)
   .dependsOn(common)
   .settings(commonSettings: _*)
   .settings(Seq(
@@ -94,7 +96,19 @@ lazy val visualization = project
       "com.typesafe.akka" %% "akka-http-experimental" % Versions.akka,
       "com.typesafe.akka" %% "akka-slf4j" % Versions.akka,
       "ch.qos.logback" % "logback-classic" % "1.1.7"
-    )
+    ),
+
+    dockerBaseImage := "java:jre-alpine",
+    dockerExposedPorts := Seq(8080, 60009),
+    packageName in Docker := "ouven/akka-visual-mailbox-visualization",
+    dockerCommands := {
+      val insertPoint = 2
+      dockerCommands.value.take(insertPoint) ++ Seq(
+        Cmd("USER", "root"),
+        ExecCmd("RUN", "apk", "--update", "add", "bash")
+      ) ++ dockerCommands.value.drop(insertPoint)
+    },
+    dockerUpdateLatest := true
   ))
 
 lazy val `sample-project` = project
