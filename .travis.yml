@@ -16,4 +16,4 @@ before_install:
 
 script:
   - sbt test
-  - [ $TRAVIS_BRANCH = "master" ] &&  sbt 'project visualization' docker:publish
+  - test $TRAVIS_BRANCH = "master" &&  sbt 'project visualization' docker:publish
