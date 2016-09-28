@@ -108,7 +108,7 @@ lazy val visualization = project
         ExecCmd("RUN", "apk", "--update", "add", "bash")
       ) ++ dockerCommands.value.drop(insertPoint)
     },
-    dockerUpdateLatest := true
+    dockerUpdateLatest <<= version { !_.endsWith("SNAPSHOT") }
   ))
 
 lazy val `sample-project` = project

@@ -31,7 +31,7 @@ akka.actor.default-mailbox.mailbox-type = "de.aktey.akka.visualmailbox.VisualMai
 It will collect your mailbox data and send it in chunks of 40 data sets or at least every second to the visualization server. 
 
 ## visualization
-The visualisation component receives the mailbox data at `udp://localhost:60009`, which can be changed in the application.conf by overriding
+The visualisation component receives the mailbox data at `udp://0.0.0.0:60009`, which can be changed in the application.conf by overriding
 ```
 de.aktey.akka.visualmailbox {
   server {
@@ -58,7 +58,8 @@ de.aktey.akka.visualmailbox {
 It uses the JavaScript keyword "class" and the "EventSource" API, so it is viewable with Chrome
 42+ or Firefox 45+. Other browsers I did not try.
 
-To run the server, you have to have `node.js` an `bower` installed.
+### run visualization with sbt
+To run the server, you have to have `node.js` and `bower` installed.
 To prepare the web part you need to do
 ```bash
 bower install
@@ -69,12 +70,18 @@ sbt "project visualization" run
 ```
 to run the server.
 
+### run visualization with docker
+There is docker image on [https://hub.docker.com](https://hub.docker.com/r/ouven/akka-visual-mailbox-visualization/).
+You can run it with 
+```bash
+docker run -ti --rm -p 8080:8080 -p 60009:60009/udp ouven/akka-visual-mailbox-visualization
+```
+
 ## sample-project
 The sample project puts it all together, to show the usage and to play arround with pictures. You can run it with
 ```bash
 sbt "project sample-project" run
 ```
   
-
 ## common
 The common project contains the protocol and common config stuff. 
