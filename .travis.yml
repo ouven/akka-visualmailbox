@@ -4,6 +4,9 @@ scala:
 jdk:
   - oraclejdk8
 
+services:
+  - docker
+  
 before_script:
   - npm install -g bower
   - bower install
