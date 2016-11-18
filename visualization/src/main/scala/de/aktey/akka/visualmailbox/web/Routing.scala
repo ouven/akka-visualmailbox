@@ -19,7 +19,7 @@ object Routing {
       complete {
         metricFlow
           .map(s => ServerSentEvent(s, "vmm"))
-          .keepAlive(20.seconds, () => ServerSentEvent.Heartbeat)
+          .keepAlive(20.seconds, () => ServerSentEvent.heartbeat)
       }
     }
   }

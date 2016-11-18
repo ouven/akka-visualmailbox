@@ -1,13 +1,16 @@
 import com.typesafe.sbt.packager.docker.{Cmd, ExecCmd}
 
 val Versions = new {
-  val akka = "2.4.10"
+  val akka = "2.4.12"
+  val `akka-http` = "10.0.0-RC2"
 }
 
 lazy val commonSettings = Seq(
   organization := "de.aktey.akka.visualmailbox",
 
-  scalaVersion := "2.11.8",
+  scalaVersion := "2.12.0",
+
+  crossScalaVersions := Seq("2.11.8", "2.12.0"),
 
   scalacOptions ++= Seq("-deprecation", "-feature"),
 
@@ -73,7 +76,7 @@ lazy val common = project
   .settings(commonSettings: _*)
   .settings(Seq(
     libraryDependencies ++= Seq(
-      "org.scalacheck" %% "scalacheck" % "1.13.0" % "test"
+      "org.scalacheck" %% "scalacheck" % "1.13.4" % "test"
     )
   ))
 
@@ -92,8 +95,8 @@ lazy val visualization = project
     publishArtifact := false,
 
     libraryDependencies ++= Seq(
-      "de.heikoseeberger" %% "akka-sse" % "1.8.0",
-      "com.typesafe.akka" %% "akka-http-experimental" % Versions.akka,
+      "de.heikoseeberger" %% "akka-sse" % "2.0.0-M4",
+      "com.typesafe.akka" %% "akka-http" % Versions.`akka-http`,
       "com.typesafe.akka" %% "akka-slf4j" % Versions.akka,
       "ch.qos.logback" % "logback-classic" % "1.1.7"
     ),

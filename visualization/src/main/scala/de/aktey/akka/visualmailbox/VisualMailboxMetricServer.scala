@@ -43,7 +43,7 @@ object VisualMailboxMetricServer extends App {
 
   Http()
     .bindAndHandle(Routing.root(MetricFlow.metricSource(router)), webConfig.host, webConfig.port)
-    .onSuccess { case ServerBinding(address) =>
+    .foreach { case ServerBinding(address) =>
       log.info(s"""{"type":"http-bound","address":"$address"}""")
     }
 }
