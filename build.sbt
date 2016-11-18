@@ -24,9 +24,10 @@ lazy val commonSettings = Seq(
   targetDirectory in EditSource := baseDirectory.value,
   variables in EditSource += "version" -> version.value,
 
-  // relase with sbt-pgp plugin
+  // release with sbt-pgp plugin
   releasePublishArtifactsAction := PgpKeys.publishSigned.value,
   releaseProcess := ReleaseProcess.steps,
+  releaseCrossBuild := true,
 
   publishTo := {
     val nexus = "https://oss.sonatype.org/"
